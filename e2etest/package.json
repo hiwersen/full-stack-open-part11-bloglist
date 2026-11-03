@@ -1,0 +1,17 @@
+{
+  "name": "bloglist-e2etest",
+  "version": "1.0.0",
+  "description": "End to end testing: Playwright",
+  "license": "ISC",
+  "author": "Hiwersen Angelo",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.1",
+    "@types/node": "^22.13.8"
+  }
+}
