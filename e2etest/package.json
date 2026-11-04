@@ -1,7 +1,6 @@
 {
   "name": "bloglist-e2etest",
   "version": "1.0.0",
-  "description": "End to end testing: Playwright",
   "license": "ISC",
   "author": "Hiwersen Angelo",
   "type": "commonjs",
