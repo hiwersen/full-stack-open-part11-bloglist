@@ -1,4 +1,4 @@
-import Field from "./Field"
+import Field from "./Field";
 import { useField } from "../hooks/index";
 import PropTypes from "prop-types";
 import Subheading from "./Subheading";
@@ -24,10 +24,12 @@ const BlogForm = ({ createBlog }) => {
     <div>
       <Subheading text="Create New Blog" />
       <form>
-        <Field attributes={ title } />
-        <Field attributes={ author } />
-        <Field attributes={ url } />
-        <button type="button" onClick={handleCreateBlog}>Create</button>
+        <Field attributes={title} />
+        <Field attributes={author} />
+        <Field attributes={url} />
+        <button type="button" onClick={handleCreateBlog}>
+          Create
+        </button>
       </form>
     </div>
   );

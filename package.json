@@ -9,7 +9,10 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "test": "cross-env NODE_ENV=test node --test --test-concurrency=1",
     "dev": "cross-env NODE_ENV=development nodemon --inspect index.js",
-    "build:ui": "rm -rf dist && cd ./frontend/ && npm run build && cp -r dist ../"
+    "build:ui": "rm -rf dist && cd ./frontend/ && npm run build && cp -r dist ../",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -22,7 +25,11 @@
     "mongoose": "^8.9.5"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.14.0",
+    "globals": "^17.14.0",
     "nodemon": "^3.1.9",
+    "prettier": "^3.9.10",
     "supertest": "^7.0.0"
   }
 }

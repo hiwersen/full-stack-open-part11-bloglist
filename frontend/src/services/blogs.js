@@ -41,4 +41,12 @@ const remove = async (blog) => {
   return response;
 };
 
-export default { setToken, getAll, create, like, comment, update, delete: remove };
+export default {
+  setToken,
+  getAll,
+  create,
+  like,
+  comment,
+  update,
+  delete: remove,
+};

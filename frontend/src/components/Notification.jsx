@@ -2,7 +2,7 @@ import { useNotificationValue } from "../hooks";
 import { dynamicWidth, size } from "../styles";
 
 const Notification = () => {
-  const notification = useNotificationValue()
+  const notification = useNotificationValue();
 
   if (!notification) return null;
 

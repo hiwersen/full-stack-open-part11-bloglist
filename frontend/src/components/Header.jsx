@@ -1,11 +1,11 @@
-import React from 'react'
+import React from "react";
 
 const header = () => {
   return (
     <header>
-        <h1>log your blogs</h1>
+      <h1>log your blogs</h1>
     </header>
-  )
-}
+  );
+};
 
-export default header
+export default header;
