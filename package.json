@@ -10,7 +10,7 @@
     "test": "cross-env NODE_ENV=test node --test --test-concurrency=1",
     "dev": "cross-env NODE_ENV=development nodemon --inspect index.js",
     "build:ui": "rm -rf dist && cd ./frontend/ && npm run build && cp -r dist ../",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

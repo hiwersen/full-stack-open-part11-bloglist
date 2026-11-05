@@ -1,29 +1,29 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
-import { borderB, flex, size, color } from "../styles";
+import { useState } from 'react'
+import PropTypes from 'prop-types'
+import { borderB, flex, size, color } from '../styles'
 
 const ToggleComponents = ({ showByDefault, hideByDefault, children }) => {
-  const [toggle, setToggle] = useState(false);
+  const [toggle, setToggle] = useState(false)
 
   const divider = {
     ...flex,
-    alignItems: "center",
+    alignItems: 'center',
     minHeight: size.sz8,
     marginBottom: size.sz2,
-    fontWeight: "bold",
-  };
+    fontWeight: 'bold',
+  }
 
   const line = {
     ...borderB,
-    display: "inline-block",
+    display: 'inline-block',
     flex: 1,
-  };
+  }
 
   const link = {
-    textAlign: "center",
+    textAlign: 'center',
     color: color.c2,
-    fontWeight: "bold",
-  };
+    fontWeight: 'bold',
+  }
 
   return (
     <div>
@@ -36,9 +36,9 @@ const ToggleComponents = ({ showByDefault, hideByDefault, children }) => {
         </div>
         <div style={link}>
           <a
-            style={{ color: "inherit" }}
+            style={{ color: 'inherit' }}
             onClick={() => {
-              setToggle(!toggle);
+              setToggle(!toggle)
             }}
           >
             {toggle ? hideByDefault : showByDefault}
@@ -46,12 +46,12 @@ const ToggleComponents = ({ showByDefault, hideByDefault, children }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 ToggleComponents.propTypes = {
   showByDefault: PropTypes.string.isRequired,
   hideByDefault: PropTypes.string.isRequired,
-};
+}
 
-export default ToggleComponents;
+export default ToggleComponents

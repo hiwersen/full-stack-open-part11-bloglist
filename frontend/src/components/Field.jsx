@@ -1,5 +1,3 @@
-import React from "react";
-
 const Field = ({ attributes }) => {
   return (
     <div>
@@ -8,7 +6,7 @@ const Field = ({ attributes }) => {
       </label>
       <input {...attributes} />
     </div>
-  );
-};
+  )
+}
 
-export default Field;
+export default Field

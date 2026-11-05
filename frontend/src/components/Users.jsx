@@ -1,16 +1,15 @@
-import React from "react";
-import { useUsersQuery } from "../hooks/index";
-import { Link } from "react-router-dom";
-import { flex, listStyle, size } from "../styles";
-import Subheading from "./Subheading";
+import { useUsersQuery } from '../hooks/index'
+import { Link } from 'react-router-dom'
+import { flex, listStyle, size } from '../styles'
+import Subheading from './Subheading'
 
 const Users = () => {
-  const { users } = useUsersQuery();
+  const { users } = useUsersQuery()
 
   const style = {
     ...flex,
     padding: `${size.sz7} 0`,
-  };
+  }
 
   return (
     <section>
@@ -40,7 +39,7 @@ const Users = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default Users;
+export default Users

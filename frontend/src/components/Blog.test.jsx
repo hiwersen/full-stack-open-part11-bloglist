@@ -1,52 +1,70 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import Blog from "./Blog";
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import Blog from './Blog'
 
-describe("<Blog />", () => {
-  const blog = {
-    title: "To be displayed",
-    author: "Anonymous",
-    url: "example.com",
-    likes: 15,
-  };
+const blog = {
+  id: '1',
+  title: 'To be displayed',
+  author: 'Anonymous',
+  url: 'example.com',
+  likes: [{ username: 'alice' }, { username: 'bob' }],
+  comments: [],
+  user: { name: 'Root', username: 'root' },
+}
 
-  let container, mockUpdateBlog;
+const mocks = vi.hoisted(() => ({
+  likeBlog: vi.fn(),
+  deleteBlog: vi.fn(),
+}))
 
+vi.mock('../hooks', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useBlogQuery: () => ({
+    blog,
+    likeBlog: mocks.likeBlog,
+    deleteBlog: mocks.deleteBlog,
+    commentBlog: mocks.commentBlog,
+    hasUserLiked: false,
+  }),
+  useUserValue: () => ({ username: 'root' }),
+}))
+
+describe('<Blog />', () => {
   beforeEach(() => {
-    mockUpdateBlog = vi.fn();
-    container = render(
-      <Blog blog={blog} updateBlog={mockUpdateBlog} />,
-    ).container;
-    // screen.debug()
-  });
+    vi.clearAllMocks()
+    render(<Blog />)
+  })
 
-  test(".content-main renders by default", () => {
-    const main = container.querySelector(".content-main");
-    expect(main).toBeVisible();
-    expect(main).toHaveTextContent(`${blog.title}, ${blog.author}`);
-  });
+  test('renders the blog title and details', () => {
+    const section = screen.getByTestId('blog')
+    expect(section).toBeVisible()
 
-  test(".content-details are not displayed by default", () => {
-    const details = container.querySelector(".content-details");
-    expect(details).not.toBeVisible();
-  });
+    const title = screen.getByTestId('blog-title')
+    expect(title).toHaveTextContent(blog.title)
 
-  test('.content-details are displayed after clicking "View" btn', async () => {
-    const user = userEvent.setup();
-    const viewBtn = screen.getByText("View");
-    await user.click(viewBtn);
+    const details = screen.getByTestId('blog-details')
+    expect(details).toBeVisible()
+    expect(details).toHaveTextContent(blog.author)
+    expect(details).toHaveTextContent(blog.url)
+    expect(details).toHaveTextContent(blog.user.name)
+    expect(screen.getByTestId('likes-count')).toHaveTextContent(/^2$/)
+  })
 
-    const details = container.querySelector(".content-details");
-    expect(details).toBeVisible();
-    expect(details).toHaveTextContent(blog.url);
-    expect(details).toHaveTextContent(blog.likes.toString());
-  });
+  test('"Like" btn click calls likeBlog with the blog', async () => {
+    const user = userEvent.setup()
+    const likeBtn = screen.getByRole('button', { name: 'Like' })
+    await user.click(likeBtn)
 
-  test('updateBlog is called twice if the "Like" btn is clicked twice', async () => {
-    const user = userEvent.setup();
-    const likeBtn = screen.getByText("Like");
-    await user.click(likeBtn);
-    await user.click(likeBtn);
-    expect(mockUpdateBlog.mock.calls).toHaveLength(2);
-  });
-});
+    expect(mocks.likeBlog).toHaveBeenCalledTimes(1)
+    expect(mocks.likeBlog).toHaveBeenCalledWith(blog)
+  })
+
+  test('"Delete" btn click calls deleteBlog with the blog', async () => {
+    const user = userEvent.setup()
+    const deleteBtn = screen.getByRole('button', { name: 'Delete' })
+    await user.click(deleteBtn)
+
+    expect(mocks.deleteBlog).toHaveBeenCalledTimes(1)
+    expect(mocks.deleteBlog).toHaveBeenCalledWith(blog)
+  })
+})

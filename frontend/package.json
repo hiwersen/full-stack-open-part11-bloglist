@@ -5,11 +5,13 @@
   "author": "Hiwersen Angelo",
   "type": "module",
   "scripts": {
-    "test": "vitest run",
     "dev": "vite",
+    "test": "vitest run",
     "build": "vite build",
-    "lint": "eslint . --fix --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "lint": "eslint . --max-warnings 0",
+    "preview": "vite preview",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@tanstack/react-query": "^5.69.0",
@@ -20,21 +22,25 @@
     "react-router-dom": "^7.4.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.0.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
-    "eslint": "^8.45.0",
-    "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-react": "^7.32.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.3",
+    "eslint": "^9.0.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-vitest-globals": "^1.5.0",
+    "globals": "^17.14.0",
     "jsdom": "^26.0.0",
-    "prettier": "3.5.3",
+    "prettier": "^3.9.10",
     "vite": "^6.2.0",
-    "vitest": "^3.0.7"
+    "vitest": "^5.1.0"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true
   }
 }

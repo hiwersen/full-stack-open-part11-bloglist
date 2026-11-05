@@ -1,27 +1,27 @@
-import { useState, forwardRef, useImperativeHandle } from "react";
-import { shadow, styleInitial } from "../styles";
+import { useState, forwardRef, useImperativeHandle } from 'react'
+import { shadow, styleInitial } from '../styles'
 
 const ToggleVisibility = forwardRef(({ children }, refs) => {
-  const [visibility, setVisibility] = useState(false);
+  const [visibility, setVisibility] = useState(false)
 
   const toggleVisibility = () => {
-    setVisibility(!visibility);
-  };
+    setVisibility(!visibility)
+  }
 
   useImperativeHandle(refs, () => {
     return {
       toggleVisibility,
-    };
-  });
+    }
+  })
 
   const style = {
     ...styleInitial,
     ...shadow,
-  };
+  }
 
   return (
     <div>
-      <div style={{ display: visibility ? "none" : "" }}>
+      <div style={{ display: visibility ? 'none' : '' }}>
         <h2>
           <input
             style={style}
@@ -33,7 +33,7 @@ const ToggleVisibility = forwardRef(({ children }, refs) => {
           <span>reate New Blog</span>
         </h2>
       </div>
-      <div style={{ display: visibility ? "" : "none" }}>
+      <div style={{ display: visibility ? '' : 'none' }}>
         {children}
         <div className="form-width">
           <button className="btnInvert" onClick={toggleVisibility}>
@@ -42,9 +42,9 @@ const ToggleVisibility = forwardRef(({ children }, refs) => {
         </div>
       </div>
     </div>
-  );
-});
+  )
+})
 
-ToggleVisibility.displayName = "ToggleVisibility";
+ToggleVisibility.displayName = 'ToggleVisibility'
 
-export default ToggleVisibility;
+export default ToggleVisibility

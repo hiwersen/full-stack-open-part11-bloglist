@@ -1,33 +1,32 @@
-import React from "react";
-import { useBlogQuery, useField } from "../hooks";
-import { flex, listStyle, size, color } from "../styles";
+import { useBlogQuery, useField } from '../hooks'
+import { flex, listStyle, size } from '../styles'
 
 const Comments = () => {
-  const { blog, commentBlog } = useBlogQuery();
-  const comment = useField("comment");
+  const { blog, commentBlog } = useBlogQuery()
+  const comment = useField('comment')
 
   const handleAddComment = () => {
     commentBlog({
       comment: comment.value,
       id: blog.id,
-    });
-    comment.reset();
-  };
+    })
+    comment.reset()
+  }
 
   const form = {
     ...flex,
-    width: "100%",
+    width: '100%',
     marginBottom: size.sz5,
-  };
+  }
 
   const input = {
     flex: 1,
     margin: 0,
-  };
+  }
 
   const btn = {
     padding: `${size.sz3} 0`,
-  };
+  }
 
   return (
     <div>
@@ -50,7 +49,7 @@ const Comments = () => {
         ))}
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default Comments;
+export default Comments

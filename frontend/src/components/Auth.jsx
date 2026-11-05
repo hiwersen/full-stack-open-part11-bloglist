@@ -1,20 +1,19 @@
-import React from "react";
-import ToggleComponents from "./ToggleComponents";
-import AuthForm from "./AuthForm";
-import { useAuth, useUserValue } from "../hooks";
-import { Navigate } from "react-router-dom";
-import { dynamicWidth } from "../styles";
+import ToggleComponents from './ToggleComponents'
+import AuthForm from './AuthForm'
+import { useAuth, useUserValue } from '../hooks'
+import { Navigate } from 'react-router-dom'
+import { dynamicWidth } from '../styles'
 
 const Auth = () => {
-  const { signup, login } = useAuth();
-  const user = useUserValue();
+  const { signup, login } = useAuth()
+  const user = useUserValue()
 
-  if (user) return <Navigate to="/" replace />;
+  if (user) return <Navigate to="/" replace />
 
   const style = {
     ...dynamicWidth,
-    minHeight: "100vh",
-  };
+    minHeight: '100vh',
+  }
 
   return (
     <section style={style}>
@@ -23,7 +22,7 @@ const Auth = () => {
         <AuthForm key="signup" type="Sign Up" auth={signup} />
       </ToggleComponents>
     </section>
-  );
-};
+  )
+}
 
-export default Auth;
+export default Auth

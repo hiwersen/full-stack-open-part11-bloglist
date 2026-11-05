@@ -1,26 +1,25 @@
-import React from "react";
-import { useAuth, useUserValue } from "../hooks";
-import { flex, color, size } from "../styles";
+import { useAuth, useUserValue } from '../hooks'
+import { flex, color, size } from '../styles'
 
 const Logout = () => {
-  const { logout } = useAuth();
-  const user = useUserValue();
-  const name = (user?.name || user?.username || "Anonymous").split(" ")[0];
+  const { logout } = useAuth()
+  const user = useUserValue()
+  const name = (user?.name || user?.username || 'Anonymous').split(' ')[0]
 
   const divStyle = {
     ...flex,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     gap: size.sz3,
-  };
+  }
 
   const nameStyle = {
     color: color.c2,
-  };
+  }
 
   const btn = {
-    color: "initial",
-    borderColor: "initial",
-  };
+    color: 'initial',
+    borderColor: 'initial',
+  }
 
   return (
     user && (
@@ -31,7 +30,7 @@ const Logout = () => {
         <input style={btn} type="button" value="Log out" onClick={logout} />
       </div>
     )
-  );
-};
+  )
+}
 
-export default Logout;
+export default Logout

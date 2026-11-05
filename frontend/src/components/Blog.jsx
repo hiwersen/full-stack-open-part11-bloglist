@@ -1,13 +1,13 @@
-import { useBlogQuery } from "../hooks";
-import Subheading from "./Subheading";
-import BlogDetails from "./BlogDetails";
-import Comments from "./Comments";
-import { Navigate } from "react-router-dom";
+import { useBlogQuery } from '../hooks'
+import Subheading from './Subheading'
+import BlogDetails from './BlogDetails'
+import Comments from './Comments'
+import { Navigate } from 'react-router-dom'
 
 const Blog = () => {
-  const { blog } = useBlogQuery();
+  const { blog } = useBlogQuery()
 
-  if (!blog) return <Navigate to="/" replace />;
+  if (!blog) return <Navigate to="/" replace />
 
   return (
     <section data-testid="blog">
@@ -15,7 +15,7 @@ const Blog = () => {
       <BlogDetails />
       <Comments />
     </section>
-  );
-};
+  )
+}
 
-export default Blog;
+export default Blog

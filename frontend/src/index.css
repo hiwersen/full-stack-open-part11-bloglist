@@ -94,7 +94,7 @@ input {
   border: unset;
 }
 
-input:not([type="button"]) {
+input:not([type='button']) {
   font-size: 1rem;
   padding: var(--sz3);
   width: 100%;
@@ -102,7 +102,7 @@ input:not([type="button"]) {
   border: solid 0.5px var(--text-color2);
 }
 
-input[type="button"] {
+input[type='button'] {
   cursor: pointer;
   font-size: 0.875em;
   width: var(--sz8);
@@ -119,7 +119,7 @@ input[type="button"] {
   color: var(--text-color4);
 }
 
-input[type="button"]:hover {
+input[type='button']:hover {
   text-shadow: var(--sz1) var(--sz1) var(--sz1) var(--text-color2);
   box-shadow: var(--sz1) var(--sz1) var(--sz1) var(--bg-color2);
 }
@@ -197,6 +197,6 @@ footer {
 
 .flex-center {
   display: flex;
-  flex-direction: "column";
+  flex-direction: 'column';
   justify-content: center;
 }
