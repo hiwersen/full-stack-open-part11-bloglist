@@ -10,7 +10,7 @@ const Blog = () => {
   if (!blog) return <Navigate to="/" replace />
 
   return (
-    <section>
+    <section data-testid="blog">
       <Subheading text={blog.title} />
       <BlogDetails />
       <Comments />
