@@ -38,7 +38,7 @@ app.get('/api/health', (_req, res) => {
   let message = 'health check endpoint hit:'
   const dbConnected = mongoose.connection.readyState === 1
 
-  if (!dbConnected) {
+  if (true || !dbConnected) {
     message += ' database unavailable'
     console.error(message)
     return res.status(503).send(message)
