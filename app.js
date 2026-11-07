@@ -30,6 +30,10 @@ app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/blogs', blogsRouter)
 
+app.get('/api/version', (_req, res) => {
+  res.send('0.0.1')
+})
+
 app.get('/api/health', (_req, res) => {
   let message = 'health check endpoint hit:'
   const dbConnected = mongoose.connection.readyState === 1

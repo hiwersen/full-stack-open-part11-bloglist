@@ -1,0 +1,40 @@
+name: Periodic Health Check
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+
+jobs:
+  health_check:
+    runs-on: ubuntu-latest
+    env:
+      URL: https://full-stack-open-part11-bloglist.onrender.com/api/health
+    steps:
+      - name: Check the deployed service URL
+        uses: jtalk/url-health-check-action@e7d5ebdc9027fbf494d2d034f3e8fc78f8b7a2b9
+        with:
+          url: ${{ env.URL }}
+          max-attempts: 3
+          retry-delay: 60s
+
+      - run: |
+          echo "health check endpoint hit: server and database ok"
+
+      - name: Notify health check failure to Discord
+        if: failure()
+        uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: 'failure'
+          nodetail: true
+          title: 'Health Check Failed'
+          description: |
+            **Checked URL:** [full-stack-open-part11-bloglist.onrender.com/api/health](${{ env.URL }})
+
+            **Event:** ${{ github.event_name }}
+            **Workflow Run:** [`${{ github.workflow }}`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            **Job:** ${{ github.job }}
+
+            **Repository:** [`${{ github.repository }}`](${{ github.server_url }}/${{ github.repository }})
+            **Live app:** [`full-stack-open-part11-bloglist.onrender.com`](https://full-stack-open-part11-bloglist.onrender.com)
