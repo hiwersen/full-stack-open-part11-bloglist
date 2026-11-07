@@ -1,0 +1,328 @@
+name: Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+jobs:
+  lint_backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Force failure
+        if: vars.FORCE_FAIL == 'true'
+        run: exit 1
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+  lint_frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Force failure
+        if: vars.FORCE_FAIL == 'true'
+        run: exit 1
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+  test_backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Force failure
+        if: vars.FORCE_FAIL == 'true'
+        run: exit 1
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test
+        run: npm test -- --test-name-pattern='GET /api/blogs'
+
+  test_frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Force failure
+        if: vars.FORCE_FAIL == 'true'
+        run: exit 1
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test
+        run: npm test -- --test-name-pattern='renders the blog title and details'
+
+  e2e_chromium:
+    id: false
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: e2etests
+    steps:
+      - name: Force failure
+        if: vars.FORCE_FAIL == 'true'
+        run: exit 1
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: e2etests/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        working-directory: .
+        run: npm run build:ui
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Playwright tests
+        run: npx playwright test --project=chromium
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ ! cancelled() }}
+        with:
+          name: playwright-report-chromium
+          path: playwright-report-chromium/
+          retention-days: 30
+
+  e2e_firefox:
+    id: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Force failure
+        if: vars.FORCE_FAIL == 'true'
+        run: exit 1
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps firefox
+
+      - name: Playwright tests
+        run: npx playwright test --project=firefox
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ ! cancelled() }}
+        with:
+          name: playwright-report-firefox
+          path: playwright-report-firefox/
+          retention-days: 30
+
+  checks_passed:
+    if: false && always()
+    needs: [lint, test, e2e_chromium, e2e_firefox]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail check on any failure
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
+
+  deploy:
+    if: false && ${{ github.event_name == 'push' && github.ref_name == 'main' && !contains(join(github.event.commits.*.message, ', '), '#SKIP') }}
+    needs: [checks_passed]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Deployment
+        run: curl --fail ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+  tag:
+    if: false
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      new_tag: ${{ steps.tag.outputs.new_tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Bump version and push tag
+        id: tag
+        uses: anothrNick/github-tag-action@4ed44965e0db8dab2b466a16da04aec3cc312fd8
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
+
+  notify_success:
+    if: false
+    needs: [tag]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify successful deploy to Discord
+        uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: 'success'
+          title: 'Pokedex Deployed'
+          description: |
+            **Message:** ${{ env.MESSAGE }}
+
+            Version [**`${{ env.TAG }}`**](${{ env.REPOSITORY_URL }}/releases/tag/${{ env.TAG }})
+            Live app: [**full-stack-open-part11-pokedex.onrender.com**](https://full-stack-open-part11-pokedex.onrender.com)
+        env:
+          MESSAGE: ${{ github.event.head_commit.message }}
+          TAG: ${{ needs.tag.outputs.new_tag }}
+          REPOSITORY_URL: ${{ github.event.repository.html_url }}
+
+  notify_failure:
+    if: false && failure()
+    needs: [lint, test, e2e_chromium, e2e_firefox, deploy, tag]
+    runs-on: ubuntu-latest
+    env:
+      EVENT: ${{ github.event_name }}
+      WORKFLOW: ${{ github.workflow }}
+      WORKFLOW_RUN_ID: ${{ github.run_id }}
+      JOB: >-
+        ${{ 
+          needs.lint.result == 'failure' && 'lint' ||
+          needs.test.result == 'failure' && 'test' ||
+          needs.e2e_chromium.result == 'failure' && 'e2e_chromium' ||
+          needs.e2e_firefox.result == 'failure' && 'e2e_firefox' ||
+          needs.deploy.result == 'failure' && 'deploy' ||
+          'tag'
+        }}
+      REPOSITORY: ${{ github.repository }}
+      REPOSITORY_URL: ${{ github.event.repository.html_url }}
+      SERVER_URL: ${{ github.server_url }}
+    steps:
+      - name: Notify build, deploy or tag failure to Discord
+        if: github.event_name == 'push' && github.ref_name == 'main'
+        uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: 'failure'
+          nodetail: true
+          title: 'Failure Details'
+          description: |
+            **Event:** `${{ env.EVENT }}`
+            **Branch:** [**`${{ env.BRANCH }}`**](${{ env.REPOSITORY_URL }}/tree/${{ env.BRANCH }})
+            **Commit:** [`${{ env.COMMIT }}`](${{ env.COMMIT_URL }})
+            **Message:** ${{ env.MESSAGE }}
+            **Author:** [`${{ env.AUTHOR }}`](${{ env.SERVER_URL }}/${{ env.USERNAME }})
+            **Workflow:** [`${{ env.WORKFLOW }}`](${{ env.REPOSITORY_URL }}/actions/runs/${{ env.WORKFLOW_RUN_ID }})
+            **Job:** `${{ env.JOB }}`
+            **Repository:** [`${{ env.REPOSITORY }}`](${{ env.REPOSITORY_URL }})
+
+            [**View changes**](${{ github.event.compare }})
+        env:
+          BRANCH: ${{ github.ref_name }}
+          COMMIT: ${{ github.event.head_commit.id }}
+          COMMIT_URL: ${{ github.event.head_commit.url }}
+          MESSAGE: ${{ github.event.head_commit.message }}
+          AUTHOR: ${{ github.event.head_commit.author.name }}
+          USERNAME: ${{ github.event.head_commit.author.username }}
+
+      - name: Notify PR failure to Discord
+        if: false && github.event_name == 'pull_request'
+        uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: 'failure'
+          nodetail: true
+          title: 'PR failure notification'
+          description: |
+            **Event:** `${{ env.EVENT }}` ~ `${{ env.PR_NUMBER }}` ~ `${{ env.PR_TYPE }}`
+            **PR title:** [`${{ env.PR_TITLE }}`](${{ env.PR_URL }})
+
+            Base branch: [**`${{ env.BASE_BRANCH }}`**](${{ env.REPOSITORY_URL }}/tree/${{ env.BASE_BRANCH }}) <- Compare branch: [**`${{ env.COMPARE_BRANCH }}`**](${{ env.REPOSITORY_URL }}/tree/${{ env.COMPARE_BRANCH }})
+
+            **Workflow:** [`${{ env.WORKFLOW }}`](${{ env.REPOSITORY_URL }}/actions/runs/${{ env.WORKFLOW_RUN_ID }})
+            **Job:** `${{ env.JOB }}`
+            **PR author:** [`${{ env.PR_AUTHOR }}`](${{ env.PR_AUTHOR_URL }})
+            **PR associated commit:** [`${{ env.PR_COMMIT }}`](${{ env.REPOSITORY_URL }}/commit/${{ env.PR_COMMIT }})
+            **Repository:** [`${{ env.REPOSITORY }}`](${{ env.REPOSITORY_URL }})
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUMBER: ${{ github.event.number }}
+          PR_URL: ${{ github.event.pull_request._links.html.href }}
+          PR_TYPE: ${{ github.event.action }}
+          COMPARE_BRANCH: ${{ github.head_ref }}
+          BASE_BRANCH: ${{ github.base_ref }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_AUTHOR_URL: ${{ github.event.pull_request.user.html_url }}
+          PR_COMMIT: ${{ github.event.pull_request.head.sha }}

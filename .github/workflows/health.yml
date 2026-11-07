@@ -11,6 +11,10 @@ jobs:
     env:
       URL: https://full-stack-open-part11-bloglist.onrender.com/api/health
     steps:
+      - name: Force failure
+        if: vars.FORCE_FAIL == 'true'
+        run: exit 1
+
       - name: Check the deployed service URL
         uses: jtalk/url-health-check-action@e7d5ebdc9027fbf494d2d034f3e8fc78f8b7a2b9
         with:
@@ -30,11 +34,11 @@ jobs:
           nodetail: true
           title: 'Health Check Failed'
           description: |
-            **Checked URL:** [full-stack-open-part11-bloglist.onrender.com/api/health](${{ env.URL }})
+            **Checked URL:**       [full-stack-open-part11-bloglist.onrender.com/api/health](${{ env.URL }})
 
-            **Event:** ${{ github.event_name }}
-            **Workflow Run:** [`${{ github.workflow }}`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            **Job:** ${{ github.job }}
+            **Event:**             ${{ github.event_name }}
+            **Workflow Run:**      [`${{ github.workflow }}`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            **Job:**               ${{ github.job }}
 
-            **Repository:** [`${{ github.repository }}`](${{ github.server_url }}/${{ github.repository }})
-            **Live app:** [`full-stack-open-part11-bloglist.onrender.com`](https://full-stack-open-part11-bloglist.onrender.com)
+            **Repository:**        [`${{ github.repository }}`](${{ github.server_url }}/${{ github.repository }})
+            **Live app:**          [`full-stack-open-part11-bloglist.onrender.com`](https://full-stack-open-part11-bloglist.onrender.com)
