@@ -110,6 +110,9 @@ jobs:
 
       - name: Test
         run: npm test -- --test-name-pattern='renders the blog title and details'
+        env:
+          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
   # e2e_chromium:
   #   if: false
