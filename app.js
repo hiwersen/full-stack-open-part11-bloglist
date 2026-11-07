@@ -35,6 +35,21 @@ app.get('*', (_, res) => {
   res.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
 })
 
+app.get('/health', (_req, res) => {
+  let message = 'health check endpoint hit:'
+  const dbConnected = mongoose.connection.readyState === 1
+
+  if (!dbConnected) {
+    message += ' database unavailable'
+    console.error(message)
+    return res.status(503).send(message)
+  }
+
+  message += ' server and database ok'
+  console.log(message)
+  res.send(message)
+})
+
 if (process.env.NODE_ENV === 'test') {
   const testingRouter = require('./controllers/testing')
   app.use('/api/testing', testingRouter)

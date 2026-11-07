@@ -2,7 +2,7 @@
 
 Continuous Integration - Part 11
 
-**Live app:** [full-stack-open-part11-bloglist.onrender.com](https://full-stack-open-part11-bloglist.onrender.com)
+**Live app:** [full-stack-open-part11-bloglist.onrender.com](https://full-stack-open-part11-bloglist.onrender.com/)
 
 ## Commands
 
