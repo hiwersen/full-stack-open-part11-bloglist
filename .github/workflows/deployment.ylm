@@ -137,7 +137,7 @@ jobs:
 
       - name: Build
         working-directory: .
-        run: npm run build:ui
+        run: ./build_step.sh
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
