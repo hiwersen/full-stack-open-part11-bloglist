@@ -9,7 +9,7 @@ jobs:
   health_check:
     runs-on: ubuntu-latest
     env:
-      URL: https://full-stack-open-part11-bloglist.onrender.com/api/health
+      URL: https://full-stack-open-part11-bloglist.onrender.com/api/health/broken
     steps:
       - name: Check the deployed service URL
         uses: jtalk/url-health-check-action@e7d5ebdc9027fbf494d2d034f3e8fc78f8b7a2b9
