@@ -83,7 +83,10 @@ jobs:
         run: npm ci
 
       - name: Test
-        run: npm test -- --test-name-pattern='GET /api/blogs'
+        run: npm test -- --test-name-pattern='DELETE /api/blogs/:id'
+        env:
+          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
   test_frontend:
     runs-on: ubuntu-latest
@@ -110,9 +113,6 @@ jobs:
 
       - name: Test
         run: npm test -- --test-name-pattern='renders the blog title and details'
-        env:
-          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
   # e2e_chromium:
   #   if: false
