@@ -35,7 +35,7 @@ app.get('*', (_, res) => {
   res.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
 })
 
-app.get('/health', (_req, res) => {
+app.get('/api/health', (_req, res) => {
   let message = 'health check endpoint hit:'
   const dbConnected = mongoose.connection.readyState === 1
 
