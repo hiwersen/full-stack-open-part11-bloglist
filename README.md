@@ -48,6 +48,59 @@ Build the frontend first (`npm run build:ui` in the root), then:
 - `npm test` starts the backend in test mode and runs the Playwright tests
 - `npm run test:report` opens the last test report
 
+# CI Pipeline
+
+## Deployment
+
+Every pull request to `main` runs:
+
+1. (Parallel)
+
+- **lint_backend**
+- **lint_frontend**
+- **test_backend**
+- **test_frontend**
+- **e2e_chromium**
+- **e2e_firefox**
+- **e2e_webkit**
+
+2.
+
+- **checks_passed** (gate checks)
+
+5.
+
+- **notify_failure**
+
+PR merge to `main` runs, additionally:
+
+3.
+
+- **deploy**
+
+4. (Parallel)
+
+- **tag**
+- **notify_success** to Discord
+
+5.
+
+- **notify_failure** to Discord
+
+## Periodic Health Check
+
+1.
+
+- **health_check** Check the deployed service URL every 15 min
+
+2.
+
+- **Log successful health check**
+
+2.
+
+- **Notify health check failure** to Discord
+
 # Related project: Pokedex
 
 The other half of Part 11 submission (exercises 11.1 - 11.20) lives in a separate repository:
@@ -55,5 +108,3 @@ The other half of Part 11 submission (exercises 11.1 - 11.20) lives in a separat
 **Live Pokedex app:** [full-stack-open-part11-pokedex.onrender.com](https://full-stack-open-part11-pokedex.onrender.com/)
 
 **Pokedex repo:** [github.com/hiwersen/full-stack-open-part11-pokedex.git](https://github.com/hiwersen/full-stack-open-part11-pokedex.git)
-
-Ask PR review
