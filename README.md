@@ -55,3 +55,5 @@ The other half of Part 11 submission (exercises 11.1 - 11.20) lives in a separat
 **Live Pokedex app:** [full-stack-open-part11-pokedex.onrender.com](https://full-stack-open-part11-pokedex.onrender.com/)
 
 **Pokedex repo:** [github.com/hiwersen/full-stack-open-part11-pokedex.git](https://github.com/hiwersen/full-stack-open-part11-pokedex.git)
+
+Ask PR review
