@@ -121,6 +121,7 @@ jobs:
         run: npm test # -- --test-name-pattern='renders the blog title and details'
 
   e2e_chromium:
+    if: false
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -165,7 +166,6 @@ jobs:
           retention-days: 30
 
   e2e_firefox:
-    if: false
     runs-on: ubuntu-latest
     defaults:
       run:
