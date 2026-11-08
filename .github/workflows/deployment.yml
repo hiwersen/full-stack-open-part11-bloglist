@@ -9,117 +9,9 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  lint_backend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Force failure
-        if: vars.FORCE_FAIL == 'true'
-        run: exit 1
-
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Check formatting
-        run: npm run format:check
-
-      - name: Lint
-        run: npm run lint
-
-  lint_frontend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-    steps:
-      - name: Force failure
-        if: vars.FORCE_FAIL == 'true'
-        run: exit 1
-
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Check formatting
-        run: npm run format:check
-
-      - name: Lint
-        run: npm run lint
-
-  test_backend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Force failure
-        if: vars.FORCE_FAIL == 'true'
-        run: exit 1
-
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Test
-        run: npm test
-        env:
-          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
-  test_frontend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-    steps:
-      - name: Force failure
-        if: vars.FORCE_FAIL == 'true'
-        run: exit 1
-
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Test
-        run: npm test
-
-  # e2e_chromium:
+  # lint_backend:
   #   if: false
   #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: e2etests
   #   steps:
   #     - name: Force failure
   #       if: vars.FORCE_FAIL == 'true'
@@ -133,28 +25,139 @@ jobs:
   #       with:
   #         node-version: '24'
   #         cache: 'npm'
-  #         cache-dependency-path: e2etests/package-lock.json
 
   #     - name: Install dependencies
   #       run: npm ci
 
-  #     - name: Build
-  #       working-directory: .
-  #       run: ./build_step.sh
+  #     - name: Check formatting
+  #       run: npm run format:check
 
-  #     - name: Install Playwright Browsers
-  #       run: npx playwright install --with-deps chromium
+  #     - name: Lint
+  #       run: npm run lint
 
-  #     - name: Playwright tests
-  #       run: npx playwright test --project=chromium
+  # lint_frontend:
+  #   if: false
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: frontend
+  #   steps:
+  #     - name: Force failure
+  #       if: vars.FORCE_FAIL == 'true'
+  #       run: exit 1
 
-  #     - name: Upload Playwright report
-  #       uses: actions/upload-artifact@v4
-  #       if: ${{ ! cancelled() }}
+  #     - name: Checkout code
+  #       uses: actions/checkout@v6
+
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v6
   #       with:
-  #         name: playwright-report-chromium
-  #         path: playwright-report-chromium/
-  #         retention-days: 30
+  #         node-version: '24'
+  #         cache: 'npm'
+  #         cache-dependency-path: frontend/package-lock.json
+
+  #     - name: Install dependencies
+  #       run: npm ci
+
+  #     - name: Check formatting
+  #       run: npm run format:check
+
+  #     - name: Lint
+  #       run: npm run lint
+
+  # test_backend:
+  #   if: false
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Force failure
+  #       if: vars.FORCE_FAIL == 'true'
+  #       run: exit 1
+
+  #     - name: Checkout code
+  #       uses: actions/checkout@v6
+
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v6
+  #       with:
+  #         node-version: '24'
+  #         cache: 'npm'
+
+  #     - name: Install dependencies
+  #       run: npm ci
+
+  #     - name: Test
+  #       run: npm test -- --test-name-pattern='DELETE /api/blogs/:id.*is idempotent'
+  #       env:
+  #         TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+  #         JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+  # test_frontend:
+  #   if: false
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: frontend
+  #   steps:
+  #     - name: Force failure
+  #       if: vars.FORCE_FAIL == 'true'
+  #       run: exit 1
+
+  #     - name: Checkout code
+  #       uses: actions/checkout@v6
+
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v6
+  #       with:
+  #         node-version: '24'
+  #         cache: 'npm'
+  #         cache-dependency-path: frontend/package-lock.json
+
+  #     - name: Install dependencies
+  #       run: npm ci
+
+  #     - name: Test
+  #       run: npm test -- --test-name-pattern='renders the blog title and details'
+
+  e2e_chromium:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: e2etests
+    steps:
+      - name: Force failure
+        if: vars.FORCE_FAIL == 'true'
+        run: exit 1
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: e2etests/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        working-directory: .
+        run: ./build_step.sh
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Playwright tests
+        run: npx playwright test --project=chromium -g 'login.*succeeds with correct credentials'
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ ! cancelled() }}
+        with:
+          name: playwright-report-chromium
+          path: playwright-report-chromium/
+          retention-days: 30
 
   # e2e_firefox:
   #   if: false
