@@ -87,7 +87,7 @@ jobs:
       - name: Test
         run: npm test # -- --test-name-pattern='DELETE /api/blogs/:id.*is idempotent'
         env:
-          TEST_MONGODB_URI: mongodb://localhost:27017/bloglist-test
+          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
   test_frontend:
