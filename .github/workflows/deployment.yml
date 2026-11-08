@@ -94,6 +94,7 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
   test_frontend:
+    if: false
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -120,7 +121,6 @@ jobs:
         run: npm test # -- --test-name-pattern='renders the blog title and details'
 
   e2e_chromium:
-    if: false
     runs-on: ubuntu-latest
     defaults:
       run:
