@@ -95,6 +95,11 @@ jobs:
     defaults:
       run:
         working-directory: frontend
+    services:
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
     steps:
       - name: Force failure
         if: vars.FORCE_FAIL == 'true'
@@ -115,12 +120,20 @@ jobs:
 
       - name: Test
         run: npm test # -- --test-name-pattern='renders the blog title and details'
+        env:
+          TEST_MONGODB_URI: mongodb://localhost:27017/bloglist-test
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
   e2e_chromium:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: e2etests
+    services:
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
     steps:
       - name: Force failure
         if: vars.FORCE_FAIL == 'true'
@@ -149,7 +162,7 @@ jobs:
       - name: Playwright tests
         run: npx playwright test --project=chromium # -g 'login.*succeeds with correct credentials'
         env:
-          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+          TEST_MONGODB_URI: mongodb://localhost:27017/bloglist-test
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
       - name: Upload Playwright report
@@ -165,6 +178,11 @@ jobs:
     defaults:
       run:
         working-directory: e2etests
+    services:
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
     steps:
       - name: Force failure
         if: vars.FORCE_FAIL == 'true'
@@ -193,7 +211,7 @@ jobs:
       - name: Playwright tests
         run: npx playwright test --project=firefox # -g 'login.*succeeds with correct credentials'
         env:
-          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+          TEST_MONGODB_URI: mongodb://localhost:27017/bloglist-test
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
       - name: Upload Playwright report
@@ -209,6 +227,11 @@ jobs:
     defaults:
       run:
         working-directory: e2etests
+    services:
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
     steps:
       - name: Force failure
         if: vars.FORCE_FAIL == 'true'
@@ -237,7 +260,7 @@ jobs:
       - name: Playwright tests
         run: npx playwright test --project=webkit # -g 'login.*succeeds with correct credentials'
         env:
-          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+          TEST_MONGODB_URI: mongodb://localhost:27017/bloglist-test
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
       - name: Upload Playwright report
