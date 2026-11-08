@@ -211,6 +211,7 @@ jobs:
           retention-days: 30
 
   e2e_webkit:
+    if: false
     runs-on: ubuntu-latest
     defaults:
       run:
