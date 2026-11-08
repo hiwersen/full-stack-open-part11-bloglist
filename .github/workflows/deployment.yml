@@ -260,17 +260,17 @@ jobs:
       ]
     runs-on: ubuntu-latest
     steps:
-      - name: Fail checks
+      - name: Fail if any required job failed
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1
 
-  # deploy:
-  #   if: false && ${{ github.event_name == 'push' && github.ref_name == 'main' && !contains(join(github.event.commits.*.message, ', '), '#SKIP') }}
-  #   needs: [checks_passed]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Trigger Deployment
-  #       run: curl --fail ${{ secrets.RENDER_DEPLOY_HOOK }}
+  deploy:
+    if: ${{ github.event_name == 'push' && github.ref_name == 'main' && !contains(join(github.event.commits.*.message, ', '), '#SKIP') }}
+    needs: [checks_passed]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Deployment
+        run: curl --fail ${{ secrets.RENDER_DEPLOY_HOOK }}
 
   # tag:
   #   if: false

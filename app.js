@@ -31,7 +31,7 @@ app.use('/api/users', usersRouter)
 app.use('/api/blogs', blogsRouter)
 
 app.get('/api/version', (_req, res) => {
-  res.send('0.0.1')
+  res.send({ commit: process.env.RENDER_GIT_COMMIT || 'local' })
 })
 
 app.get('/api/health', (_req, res) => {
