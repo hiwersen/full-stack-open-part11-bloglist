@@ -12,3 +12,5 @@ Start by running `npm install` inside the project folder
 - `npm test` runs unit and integration backend tests
 - `npm run dev` runs the development server
 - `npm run build:ui` creates a production build
+
+skip commit test
