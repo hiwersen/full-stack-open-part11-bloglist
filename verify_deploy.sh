@@ -14,7 +14,7 @@ do
     sleep 15
 done
 
-echo "::warning::Still waiting for $GITHUB_SHA (live: $live)"
+echo -e "::error::Still waiting for $GITHUB_SHA (live: $live)"
 exit 1
 
 
