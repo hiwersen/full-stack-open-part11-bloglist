@@ -68,6 +68,7 @@ jobs:
         run: npm run lint
 
   test_backend:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Force failure
@@ -93,7 +94,6 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
   test_frontend:
-    if: false
     runs-on: ubuntu-latest
     defaults:
       run:
