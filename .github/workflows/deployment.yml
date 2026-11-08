@@ -149,7 +149,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Playwright tests
-        run: npx playwright test --project=chromium -g 'login.*succeeds with correct credentials'
+        run: npx playwright test --project=chromium # -g 'login.*succeeds with correct credentials'
         env:
           TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
