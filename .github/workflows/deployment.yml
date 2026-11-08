@@ -12,11 +12,10 @@ env:
 
 jobs:
   lint_backend:
-    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Force failure
-        if: false && vars.FORCE_FAIL == 'true'
+        if: vars.FORCE_FAIL == 'true'
         run: exit 1
 
       - name: Checkout code
