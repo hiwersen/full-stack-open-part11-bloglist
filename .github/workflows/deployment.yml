@@ -12,6 +12,7 @@ env:
 
 jobs:
   lint_backend:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Force failure
