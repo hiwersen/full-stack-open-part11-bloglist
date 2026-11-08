@@ -330,80 +330,65 @@ jobs:
           TAG: ${{ needs.tag.outputs.new_tag }}
           REPOSITORY_URL: ${{ github.event.repository.html_url }}
 
-  # notify_failure:
-  #   if: false && failure()
-  #   needs: [lint, test, e2e_chromium, e2e_firefox, deploy, tag]
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     EVENT: ${{ github.event_name }}
-  #     WORKFLOW: ${{ github.workflow }}
-  #     WORKFLOW_RUN_ID: ${{ github.run_id }}
-  #     JOB: >-
-  #       ${{
-  #         needs.lint.result == 'failure' && 'lint' ||
-  #         needs.test.result == 'failure' && 'test' ||
-  #         needs.e2e_chromium.result == 'failure' && 'e2e_chromium' ||
-  #         needs.e2e_firefox.result == 'failure' && 'e2e_firefox' ||
-  #         needs.deploy.result == 'failure' && 'deploy' ||
-  #         'tag'
-  #       }}
-  #     REPOSITORY: ${{ github.repository }}
-  #     REPOSITORY_URL: ${{ github.event.repository.html_url }}
-  #     SERVER_URL: ${{ github.server_url }}
-  #   steps:
-  #     - name: Notify build, deploy or tag failure to Discord
-  #       if: github.event_name == 'push' && github.ref_name == 'main'
-  #       uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708
-  #       with:
-  #         webhook: ${{ secrets.DISCORD_WEBHOOK }}
-  #         status: 'failure'
-  #         nodetail: true
-  #         title: 'Failure Details'
-  #         description: |
-  #           **Event:** `${{ env.EVENT }}`
-  #           **Branch:** [**`${{ env.BRANCH }}`**](${{ env.REPOSITORY_URL }}/tree/${{ env.BRANCH }})
-  #           **Commit:** [`${{ env.COMMIT }}`](${{ env.COMMIT_URL }})
-  #           **Message:** ${{ env.MESSAGE }}
-  #           **Author:** [`${{ env.AUTHOR }}`](${{ env.SERVER_URL }}/${{ env.USERNAME }})
-  #           **Workflow:** [`${{ env.WORKFLOW }}`](${{ env.REPOSITORY_URL }}/actions/runs/${{ env.WORKFLOW_RUN_ID }})
-  #           **Job:** `${{ env.JOB }}`
-  #           **Repository:** [`${{ env.REPOSITORY }}`](${{ env.REPOSITORY_URL }})
+  notify_failure:
+    if: failure()
+    needs:
+      [
+        lint_backend,
+        lint_frontend,
+        test_backend,
+        test_frontend,
+        e2e_chromium,
+        e2e_firefox,
+        e2e_webkit,
+        checks_passed,
+        deploy,
+        tag,
+      ]
+    runs-on: ubuntu-latest
+    env:
+      EVENT: ${{ github.event_name }}
+      WORKFLOW: ${{ github.workflow }}
+      WORKFLOW_RUN_ID: ${{ github.run_id }}
+      JOB: >-
+        ${{
+          needs.lint_backend.result == 'failure' && 'lint_backend' ||
+          needs.lint_frontend.result == 'failure' && 'lint_frontend' ||
+          needs.test_backend.result == 'failure' && 'test_backend' ||
+          needs.test_frontend.result == 'failure' && 'test_frontend' ||
+          needs.e2e_chromium.result == 'failure' && 'e2e_chromium' ||
+          needs.e2e_firefox.result == 'failure' && 'e2e_firefox' ||
+          needs.e2e_webkit.result == 'failure' && 'e2e_webkit' ||
+          needs.deploy.result == 'failure' && 'deploy' ||
+          'tag'
+        }}
+      REPOSITORY: ${{ github.repository }}
+      REPOSITORY_URL: ${{ github.event.repository.html_url }}
+      SERVER_URL: ${{ github.server_url }}
+    steps:
+      - name: Notify build, deploy or tag failure to Discord
+        if: github.event_name == 'push' && github.ref_name == 'main'
+        uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: 'failure'
+          nodetail: true
+          title: 'Failure Details'
+          description: |
+            **Event:**        `${{ env.EVENT }}`
+            **Branch:**       [**`${{ env.BRANCH }}`**](${{ env.REPOSITORY_URL }}/tree/${{ env.BRANCH }})
+            **Commit:**       [`${{ env.COMMIT }}`](${{ env.COMMIT_URL }})
+            **Message:**      ${{ env.MESSAGE }}
+            **Author:**       [`${{ env.AUTHOR }}`](${{ env.SERVER_URL }}/${{ env.USERNAME }})
+            **Workflow:**     [`${{ env.WORKFLOW }}`](${{ env.REPOSITORY_URL }}/actions/runs/${{ env.WORKFLOW_RUN_ID }})
+            **Job:**          `${{ env.JOB }}`
+            **Repository:**   [`${{ env.REPOSITORY }}`](${{ env.REPOSITORY_URL }})
 
-  #           [**View changes**](${{ github.event.compare }})
-  #       env:
-  #         BRANCH: ${{ github.ref_name }}
-  #         COMMIT: ${{ github.event.head_commit.id }}
-  #         COMMIT_URL: ${{ github.event.head_commit.url }}
-  #         MESSAGE: ${{ github.event.head_commit.message }}
-  #         AUTHOR: ${{ github.event.head_commit.author.name }}
-  #         USERNAME: ${{ github.event.head_commit.author.username }}
-
-  #     - name: Notify PR failure to Discord
-  #       if: false && github.event_name == 'pull_request'
-  #       uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708
-  #       with:
-  #         webhook: ${{ secrets.DISCORD_WEBHOOK }}
-  #         status: 'failure'
-  #         nodetail: true
-  #         title: 'PR failure notification'
-  #         description: |
-  #           **Event:** `${{ env.EVENT }}` ~ `${{ env.PR_NUMBER }}` ~ `${{ env.PR_TYPE }}`
-  #           **PR title:** [`${{ env.PR_TITLE }}`](${{ env.PR_URL }})
-
-  #           Base branch: [**`${{ env.BASE_BRANCH }}`**](${{ env.REPOSITORY_URL }}/tree/${{ env.BASE_BRANCH }}) <- Compare branch: [**`${{ env.COMPARE_BRANCH }}`**](${{ env.REPOSITORY_URL }}/tree/${{ env.COMPARE_BRANCH }})
-
-  #           **Workflow:** [`${{ env.WORKFLOW }}`](${{ env.REPOSITORY_URL }}/actions/runs/${{ env.WORKFLOW_RUN_ID }})
-  #           **Job:** `${{ env.JOB }}`
-  #           **PR author:** [`${{ env.PR_AUTHOR }}`](${{ env.PR_AUTHOR_URL }})
-  #           **PR associated commit:** [`${{ env.PR_COMMIT }}`](${{ env.REPOSITORY_URL }}/commit/${{ env.PR_COMMIT }})
-  #           **Repository:** [`${{ env.REPOSITORY }}`](${{ env.REPOSITORY_URL }})
-  #       env:
-  #         PR_TITLE: ${{ github.event.pull_request.title }}
-  #         PR_NUMBER: ${{ github.event.number }}
-  #         PR_URL: ${{ github.event.pull_request._links.html.href }}
-  #         PR_TYPE: ${{ github.event.action }}
-  #         COMPARE_BRANCH: ${{ github.head_ref }}
-  #         BASE_BRANCH: ${{ github.base_ref }}
-  #         PR_AUTHOR: ${{ github.event.pull_request.user.login }}
-  #         PR_AUTHOR_URL: ${{ github.event.pull_request.user.html_url }}
-  #         PR_COMMIT: ${{ github.event.pull_request.head.sha }}
+            [**View changes**](${{ github.event.compare }})
+        env:
+          BRANCH: ${{ github.ref_name }}
+          COMMIT: ${{ github.event.head_commit.id }}
+          COMMIT_URL: ${{ github.event.head_commit.url }}
+          MESSAGE: ${{ github.event.head_commit.message }}
+          AUTHOR: ${{ github.event.head_commit.author.name }}
+          USERNAME: ${{ github.event.head_commit.author.username }}
