@@ -118,7 +118,52 @@ jobs:
   #     - name: Test
   #       run: npm test -- --test-name-pattern='renders the blog title and details'
 
-  e2e_chromium:
+  # e2e_chromium:
+  #    if: false
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: e2etests
+  #   steps:
+  #     - name: Force failure
+  #       if: vars.FORCE_FAIL == 'true'
+  #       run: exit 1
+
+  #     - name: Checkout code
+  #       uses: actions/checkout@v6
+
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v6
+  #       with:
+  #         node-version: '24'
+  #         cache: 'npm'
+  #         cache-dependency-path: e2etests/package-lock.json
+
+  #     - name: Install dependencies
+  #       run: npm ci
+
+  #     - name: Build
+  #       working-directory: .
+  #       run: ./build_step.sh
+
+  #     - name: Install Playwright Browsers
+  #       run: npx playwright install --with-deps chromium
+
+  #     - name: Playwright tests
+  #       run: npx playwright test --project=chromium # -g 'login.*succeeds with correct credentials'
+  #       env:
+  #         TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+  #         JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+  #     - name: Upload Playwright report
+  #       uses: actions/upload-artifact@v4
+  #       if: ${{ ! cancelled() }}
+  #       with:
+  #         name: playwright-report-chromium
+  #         path: playwright-report-chromium/
+  #         retention-days: 30
+
+  e2e_firefox:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -146,10 +191,10 @@ jobs:
         run: ./build_step.sh
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps firefox
 
       - name: Playwright tests
-        run: npx playwright test --project=chromium # -g 'login.*succeeds with correct credentials'
+        run: npx playwright test --project=firefox -g 'login.*succeeds with correct credentials'
         env:
           TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
@@ -158,46 +203,9 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ ! cancelled() }}
         with:
-          name: playwright-report-chromium
-          path: playwright-report-chromium/
+          name: playwright-report-firefox
+          path: playwright-report-firefox/
           retention-days: 30
-
-  # e2e_firefox:
-  #   if: false
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Force failure
-  #       if: vars.FORCE_FAIL == 'true'
-  #       run: exit 1
-
-  #     - name: Checkout code
-  #       uses: actions/checkout@v6
-
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v6
-  #       with:
-  #         node-version: '24'
-  #         cache: 'npm'
-
-  #     - name: Install dependencies
-  #       run: npm ci
-
-  #     - name: Build
-  #       run: npm run build
-
-  #     - name: Install Playwright Browsers
-  #       run: npx playwright install --with-deps firefox
-
-  #     - name: Playwright tests
-  #       run: npx playwright test --project=firefox
-
-  #     - name: Upload Playwright report
-  #       uses: actions/upload-artifact@v4
-  #       if: ${{ ! cancelled() }}
-  #       with:
-  #         name: playwright-report-firefox
-  #         path: playwright-report-firefox/
-  #         retention-days: 30
 
   # checks_passed:
   #   if: false && always()
