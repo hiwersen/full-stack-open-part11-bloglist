@@ -7,6 +7,8 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize]
+env:
+  APP_URL: https://full-stack-open-part11-bloglist.onrender.com
 
 jobs:
   lint_backend:
@@ -269,8 +271,24 @@ jobs:
     needs: [checks_passed]
     runs-on: ubuntu-latest
     steps:
+      - name: Force failure
+        if: vars.FORCE_FAIL == 'true'
+        run: exit 1
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+
       - name: Trigger Deployment
         run: curl --fail ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+      - name: Post-Deploy Verification
+        run: ./verify_deploy.sh
 
   # tag:
   #   if: false
