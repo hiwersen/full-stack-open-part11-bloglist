@@ -31,8 +31,7 @@ app.use('/api/users', usersRouter)
 app.use('/api/blogs', blogsRouter)
 
 app.get('/api/version', (_req, res) => {
-  res.send({ commit: 'broken' })
-  // res.send({ commit: process.env.RENDER_GIT_COMMIT || 'local' })
+  res.json({ commit: process.env.RENDER_GIT_COMMIT || 'local' })
 })
 
 app.get('/api/health', (_req, res) => {
