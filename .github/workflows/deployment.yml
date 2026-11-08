@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Force failure
-        if: vars.FORCE_FAIL == 'true'
+        if: false && vars.FORCE_FAIL == 'true'
         run: exit 1
 
       - name: Checkout code
@@ -43,7 +43,7 @@ jobs:
         working-directory: frontend
     steps:
       - name: Force failure
-        if: vars.FORCE_FAIL == 'true'
+        if: false && vars.FORCE_FAIL == 'true'
         run: exit 1
 
       - name: Checkout code
@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Force failure
-        if: vars.FORCE_FAIL == 'true'
+        if: false && vars.FORCE_FAIL == 'true'
         run: exit 1
 
       - name: Checkout code
@@ -97,7 +97,7 @@ jobs:
         working-directory: frontend
     steps:
       - name: Force failure
-        if: vars.FORCE_FAIL == 'true'
+        if: false && vars.FORCE_FAIL == 'true'
         run: exit 1
 
       - name: Checkout code
@@ -123,7 +123,7 @@ jobs:
         working-directory: e2etests
     steps:
       - name: Force failure
-        if: vars.FORCE_FAIL == 'true'
+        if: false && vars.FORCE_FAIL == 'true'
         run: exit 1
 
       - name: Checkout code
@@ -167,7 +167,7 @@ jobs:
         working-directory: e2etests
     steps:
       - name: Force failure
-        if: vars.FORCE_FAIL == 'true'
+        if: false && vars.FORCE_FAIL == 'true'
         run: exit 1
 
       - name: Checkout code
@@ -211,7 +211,7 @@ jobs:
         working-directory: e2etests
     steps:
       - name: Force failure
-        if: vars.FORCE_FAIL == 'true'
+        if: false && vars.FORCE_FAIL == 'true'
         run: exit 1
 
       - name: Checkout code
@@ -272,7 +272,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Force failure
-        if: vars.FORCE_FAIL == 'true'
+        if: false && vars.FORCE_FAIL == 'true'
         run: exit 1
 
       - name: Checkout code
@@ -298,6 +298,10 @@ jobs:
     outputs:
       new_tag: ${{ steps.tag.outputs.new_tag }}
     steps:
+      - name: Force failure
+        if: vars.FORCE_FAIL == 'true'
+        run: exit 1
+
       - name: Checkout code
         uses: actions/checkout@v6
         with:
@@ -311,7 +315,7 @@ jobs:
           DEFAULT_BUMP: patch
 
   notify_success:
-    needs: [tag]
+    needs: [deploy]
     runs-on: ubuntu-latest
     steps:
       - name: Notify successful deploy to Discord
@@ -323,11 +327,9 @@ jobs:
           description: |
             **Message:**  ${{ env.MESSAGE }}
 
-            Version       [**`${{ env.TAG }}`**](${{ env.REPOSITORY_URL }}/releases/tag/${{ env.TAG }})
             Live app:     [**full-stack-open-part11-bloglist.onrender.com**](${{ env.APP_URL }})
         env:
           MESSAGE: ${{ github.event.head_commit.message }}
-          TAG: ${{ needs.tag.outputs.new_tag }}
           REPOSITORY_URL: ${{ github.event.repository.html_url }}
 
   notify_failure:
